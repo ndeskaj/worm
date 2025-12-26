@@ -1,0 +1,20 @@
+
+services:
+  # This is the victim machine
+  victim:
+    image: lscr.io/linuxserver/openssh-server:latest
+    container_name: victim_machine
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - PASSWORD_ACCESS=true
+      - USER_NAME=root
+      - USER_PASSWORD=toor
+    ports:
+      - "2222:2222"
+    networks:
+      - worm_net
+
+networks:
+  worm_net:
+    driver: bridge
